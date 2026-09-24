@@ -7,7 +7,10 @@ from fastapi.staticfiles import StaticFiles
 
 from voice.stt import speech_to_text
 from voice.tts import text_to_speech
+
 from agent.agent import get_response
+
+from memory import create_memory_table, save_message
 
 
 # --------------------------------------------------
@@ -18,7 +21,14 @@ app = FastAPI(title="AI Voice Agent")
 
 
 # --------------------------------------------------
-# Create audio directory if it doesn't exist
+# Initialize Memory Database
+# --------------------------------------------------
+
+create_memory_table()
+
+
+# --------------------------------------------------
+# Create audio directory
 # --------------------------------------------------
 
 os.makedirs("audio", exist_ok=True)
@@ -34,7 +44,7 @@ def home():
 
 
 # --------------------------------------------------
-# Serve generated audio files
+# Serve Audio Files
 # --------------------------------------------------
 
 app.mount(
@@ -51,7 +61,6 @@ app.mount(
 @app.post("/voice")
 async def voice(audio: UploadFile = File(...)):
 
-    # Unique filenames for each request
     input_filename = f"input_{uuid.uuid4().hex}.webm"
     output_filename = f"response_{uuid.uuid4().hex}.mp3"
 
@@ -61,7 +70,7 @@ async def voice(audio: UploadFile = File(...)):
     try:
 
         # ------------------------------------------
-        # 1. Read uploaded audio
+        # 1. Receive Audio
         # ------------------------------------------
 
         audio_data = await audio.read()
@@ -94,7 +103,15 @@ async def voice(audio: UploadFile = File(...)):
 
 
         # ------------------------------------------
-        # 4. Text To Speech
+        # 4. Save Conversation
+        # ------------------------------------------
+
+        save_message("user", text)
+        save_message("assistant", response)
+
+
+        # ------------------------------------------
+        # 5. Text To Speech
         # ------------------------------------------
 
         text_to_speech(
@@ -104,7 +121,7 @@ async def voice(audio: UploadFile = File(...)):
 
 
         # ------------------------------------------
-        # 5. Return response
+        # 6. Return Response
         # ------------------------------------------
 
         return {
@@ -126,7 +143,7 @@ async def voice(audio: UploadFile = File(...)):
     finally:
 
         # ------------------------------------------
-        # Delete temporary input audio
+        # Delete temporary input file
         # ------------------------------------------
 
         if os.path.exists(input_path):
