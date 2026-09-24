@@ -10,16 +10,33 @@ from voice.tts import text_to_speech
 from agent.agent import get_response
 
 
+# --------------------------------------------------
+# Create FastAPI app
+# --------------------------------------------------
+
 app = FastAPI(title="AI Voice Agent")
 
 
-# Serve frontend
+# --------------------------------------------------
+# Create audio directory if it doesn't exist
+# --------------------------------------------------
+
+os.makedirs("audio", exist_ok=True)
+
+
+# --------------------------------------------------
+# Home Page
+# --------------------------------------------------
+
 @app.get("/")
 def home():
     return FileResponse("frontend/index.html")
 
 
+# --------------------------------------------------
 # Serve generated audio files
+# --------------------------------------------------
+
 app.mount(
     "/audio",
     StaticFiles(directory="audio"),
@@ -27,25 +44,25 @@ app.mount(
 )
 
 
+# --------------------------------------------------
+# Voice API
+# --------------------------------------------------
+
 @app.post("/voice")
 async def voice(audio: UploadFile = File(...)):
 
-    # -----------------------------
-    # 1. Create unique filenames
-    # -----------------------------
-
-    input_file = f"input_{uuid.uuid4().hex}.webm"
+    # Unique filenames for each request
+    input_filename = f"input_{uuid.uuid4().hex}.webm"
     output_filename = f"response_{uuid.uuid4().hex}.mp3"
 
-    input_path = input_file
+    input_path = input_filename
     output_path = os.path.join("audio", output_filename)
-
 
     try:
 
-        # -----------------------------
-        # 2. Read uploaded audio
-        # -----------------------------
+        # ------------------------------------------
+        # 1. Read uploaded audio
+        # ------------------------------------------
 
         audio_data = await audio.read()
 
@@ -53,9 +70,9 @@ async def voice(audio: UploadFile = File(...)):
             f.write(audio_data)
 
 
-        # -----------------------------
-        # 3. Speech → Text
-        # -----------------------------
+        # ------------------------------------------
+        # 2. Speech To Text
+        # ------------------------------------------
 
         text = speech_to_text(input_path)
 
@@ -67,28 +84,28 @@ async def voice(audio: UploadFile = File(...)):
         print("👤 User:", text)
 
 
-        # -----------------------------
-        # 4. Text → AI Agent
-        # -----------------------------
+        # ------------------------------------------
+        # 3. AI Agent
+        # ------------------------------------------
 
         response = get_response(text)
 
         print("🤖 Agent:", response)
 
 
-        # -----------------------------
-        # 5. Agent → Speech
-        # -----------------------------
+        # ------------------------------------------
+        # 4. Text To Speech
+        # ------------------------------------------
 
-        audio_file = text_to_speech(
+        text_to_speech(
             response,
             output_path
         )
 
 
-        # -----------------------------
-        # 6. Return response
-        # -----------------------------
+        # ------------------------------------------
+        # 5. Return response
+        # ------------------------------------------
 
         return {
             "text": text,
@@ -97,11 +114,20 @@ async def voice(audio: UploadFile = File(...)):
         }
 
 
+    except Exception as e:
+
+        print("❌ Error:", e)
+
+        return {
+            "error": str(e)
+        }
+
+
     finally:
 
-        # -----------------------------
-        # 7. Delete input audio
-        # -----------------------------
+        # ------------------------------------------
+        # Delete temporary input audio
+        # ------------------------------------------
 
         if os.path.exists(input_path):
             os.remove(input_path)
