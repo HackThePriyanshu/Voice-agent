@@ -2,8 +2,11 @@
 venv/
 __pycache__/
 *.pyc
+
 *.wav
+*.webm
 *.mp3
+
 memory.db
-recording.wav
-response.mp3
+
+audio/

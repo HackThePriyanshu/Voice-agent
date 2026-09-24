@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Voice Agent</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+        }
+
+        #status {
+            margin-top: 25px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🎙️ AI Voice Agent</h1>
+
+    <button id="recordBtn">
+        🎤 Start Recording
+    </button>
+
+    <p id="status">
+        Ready
+    </p>
+
+
+    <script>
+
+        const recordBtn = document.getElementById("recordBtn");
+        const status = document.getElementById("status");
+
+        let mediaRecorder;
+        let audioChunks = [];
+
+
+        recordBtn.addEventListener("click", async () => {
+
+            // START RECORDING
+            if (!mediaRecorder || mediaRecorder.state === "inactive") {
+
+                try {
+
+                    const stream =
+                        await navigator.mediaDevices.getUserMedia({
+                            audio: true
+                        });
+
+                    mediaRecorder =
+                        new MediaRecorder(stream);
+
+                    audioChunks = [];
+
+
+                    mediaRecorder.ondataavailable =
+                        (event) => {
+
+                            if (event.data.size > 0) {
+                                audioChunks.push(event.data);
+                            }
+
+                        };
+
+
+                    mediaRecorder.onstop =
+                        async () => {
+
+                            status.textContent =
+                                "⏳ Processing...";
+
+
+                            const audioBlob =
+                                new Blob(
+                                    audioChunks,
+                                    {
+                                        type: "audio/webm"
+                                    }
+                                );
+
+
+                            const formData =
+                                new FormData();
+
+
+                            formData.append(
+                                "audio",
+                                audioBlob,
+                                "recording.webm"
+                            );
+
+
+                            try {
+
+                                const response =
+                                    await fetch(
+                                        "/voice",
+                                        {
+                                            method: "POST",
+                                            body: formData
+                                        }
+                                    );
+
+
+                                const data =
+                                    await response.json();
+
+
+                                console.log(
+                                    "API Response:",
+                                    data
+                                );
+
+
+                                if (data.error) {
+
+                                    status.textContent =
+                                        "❌ " + data.error;
+
+                                    return;
+                                }
+
+
+                                // Show AI response
+                                status.textContent =
+                                    "🤖 " + data.response;
+
+
+                                // Play AI voice
+                                if (data.audio_file) {
+
+                                    const audio =
+                                        new Audio(
+                                            data.audio_file
+                                        );
+
+                                    await audio.play();
+                                }
+
+                            }
+
+                            catch (error) {
+
+                                console.error(
+                                    "Voice request error:",
+                                    error
+                                );
+
+                                status.textContent =
+                                    "❌ Something went wrong.";
+                            }
+
+                        };
+
+
+                    mediaRecorder.start();
+
+
+                    recordBtn.textContent =
+                        "⏹️ Stop Recording";
+
+                    status.textContent =
+                        "🎤 Listening...";
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Microphone error:",
+                        error
+                    );
+
+                    status.textContent =
+                        "❌ Microphone permission denied.";
+                }
+
+            }
+
+
+            // STOP RECORDING
+            else {
+
+                mediaRecorder.stop();
+
+                recordBtn.textContent =
+                    "🎤 Start Recording";
+
+                status.textContent =
+                    "⏳ Processing...";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
