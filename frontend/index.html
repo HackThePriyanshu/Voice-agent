@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>AI Voice Agent</title>
 
     <style>
@@ -15,385 +14,415 @@
 
         body {
             font-family: Inter, Arial, sans-serif;
-            min-height: 100vh;
-            color: #f5f7ff;
             background:
-                radial-gradient(circle at 20% 20%, #18234a 0%, transparent 35%),
-                radial-gradient(circle at 80% 10%, #30205c 0%, transparent 30%),
-                #070914;
+                radial-gradient(circle at top left, #172554 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #312e81 0%, transparent 35%),
+                #050816;
+            color: #f8fafc;
+            min-height: 100vh;
         }
 
         .container {
             width: min(1200px, 94%);
             margin: auto;
-            padding: 25px 0 40px;
+            padding: 30px 0 40px;
         }
 
         /* HEADER */
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5px 30px;
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
-        .brand-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
+        .header p {
+            color: #94a3b8;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        /* MAIN AREA */
+        .main-section {
             display: grid;
-            place-items: center;
-            font-size: 23px;
-            background: linear-gradient(135deg, #6d5dfc, #00c6ff);
-            box-shadow: 0 0 30px rgba(93, 93, 252, .35);
-        }
-
-        .brand h1 {
-            font-size: 21px;
-        }
-
-        .brand p {
-            color: #8991a8;
-            font-size: 12px;
-            margin-top: 3px;
-        }
-
-        .online {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #9ca5bd;
-            font-size: 13px;
-        }
-
-        .online-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: #32e68a;
-            box-shadow: 0 0 12px #32e68a;
-        }
-
-        /* MAIN */
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1.4fr .8fr;
+            grid-template-columns: 380px 1fr;
             gap: 20px;
+            margin-bottom: 20px;
         }
 
         .card {
-            background: rgba(16, 20, 38, .72);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 24px;
-            backdrop-filter: blur(18px);
-            box-shadow: 0 20px 70px rgba(0,0,0,.25);
+            background: rgba(15, 23, 42, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 22px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
         }
 
-        /* VOICE PANEL */
-
-        .voice-panel {
-            min-height: 510px;
+        /* VOICE CONTROL */
+        .voice-card {
+            min-height: 470px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding: 30px;
+        }
+
+        .orb-container {
+            width: 190px;
+            height: 190px;
             position: relative;
-            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
         }
 
-        .voice-panel::before {
-            content: "";
+        .orb-ring {
             position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(89,92,255,.16), transparent 70%);
-            pointer-events: none;
-        }
-
-        .status {
-            color: #8f98b1;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .status strong {
-            color: #ffffff;
-        }
-
-        /* ORB */
-
-        .orb-wrapper {
-            position: relative;
-            width: 230px;
-            height: 230px;
-            display: grid;
-            place-items: center;
-            margin-bottom: 30px;
-        }
-
-        .orb {
-            width: 125px;
-            height: 125px;
             border-radius: 50%;
-            background:
-                radial-gradient(circle at 35% 30%, #a79cff, #6155ff 45%, #25215e 100%);
-            box-shadow:
-                0 0 40px rgba(101,91,255,.55),
-                0 0 100px rgba(101,91,255,.25);
-            display: grid;
-            place-items: center;
-            font-size: 42px;
-            z-index: 2;
-            transition: .3s;
-        }
-
-        .ring {
-            position: absolute;
-            border: 1px solid rgba(112,105,255,.35);
-            border-radius: 50%;
+            border: 1px solid rgba(96, 165, 250, 0.35);
             animation: pulse 3s infinite;
         }
 
-        .ring.one {
-            width: 160px;
-            height: 160px;
+        .ring-1 {
+            width: 190px;
+            height: 190px;
         }
 
-        .ring.two {
-            width: 200px;
-            height: 200px;
-            animation-delay: .8s;
+        .ring-2 {
+            width: 155px;
+            height: 155px;
+            animation-delay: 0.5s;
         }
 
-        .ring.three {
-            width: 235px;
-            height: 235px;
-            animation-delay: 1.6s;
+        .ring-3 {
+            width: 125px;
+            height: 125px;
+            animation-delay: 1s;
+        }
+
+        .orb {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 25%, #93c5fd, #6366f1 45%, #312e81);
+            box-shadow:
+                0 0 30px rgba(99, 102, 241, 0.8),
+                0 0 70px rgba(59, 130, 246, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            z-index: 2;
         }
 
         @keyframes pulse {
-            0%,100% {
-                transform: scale(.9);
-                opacity: .2;
+            0%, 100% {
+                transform: scale(0.95);
+                opacity: 0.35;
             }
 
             50% {
                 transform: scale(1.05);
-                opacity: .8;
+                opacity: 0.8;
             }
         }
 
-        /* LISTENING STATE */
-
-        .listening .orb {
-            animation: listening 1s infinite alternate;
+        .orb-container.active .orb {
+            animation: orbGlow 1s infinite alternate;
         }
 
-        .listening .ring {
-            animation-duration: 1s;
-        }
-
-        @keyframes listening {
+        @keyframes orbGlow {
             from {
-                transform: scale(1);
+                box-shadow:
+                    0 0 30px rgba(99, 102, 241, 0.7),
+                    0 0 60px rgba(59, 130, 246, 0.3);
             }
 
             to {
-                transform: scale(1.12);
+                box-shadow:
+                    0 0 45px rgba(129, 140, 248, 1),
+                    0 0 100px rgba(59, 130, 246, 0.6);
             }
         }
 
-        /* BUTTON */
-
-        .talk-btn {
-            border: none;
-            padding: 15px 32px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #665cff, #4d7cff);
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 12px 30px rgba(82,82,255,.3);
-            transition: .25s;
-        }
-
-        .talk-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(82,82,255,.45);
-        }
-
-        .talk-btn.stop {
-            background: linear-gradient(135deg, #ff4d67, #ff705c);
-        }
-
-        .hint {
-            margin-top: 15px;
-            color: #646d86;
-            font-size: 12px;
-        }
-
-        /* ACTIVITY */
-
-        .activity {
-            padding: 24px;
-        }
-
-        .section-title {
-            font-size: 15px;
+        .status {
+            font-size: 14px;
+            color: #94a3b8;
             margin-bottom: 20px;
         }
 
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .activity-item {
-            padding: 14px;
+        .record-btn {
+            border: none;
             border-radius: 14px;
-            background: rgba(255,255,255,.035);
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            color: #9da5bb;
-            font-size: 13px;
-        }
-
-        .activity-icon {
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
-            display: grid;
-            place-items: center;
-            background: rgba(101,91,255,.12);
-        }
-
-        .activity-item.active {
-            border: 1px solid rgba(101,91,255,.4);
+            padding: 14px 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
             color: white;
-            background: rgba(101,91,255,.08);
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+            transition: 0.2s;
         }
 
-        /* CAPABILITIES */
-
-        .capabilities {
-            margin-top: 20px;
-            padding: 25px;
+        .record-btn:hover {
+            transform: translateY(-2px);
         }
 
-        .cap-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-        }
-
-        .cap {
-            padding: 20px;
-            border-radius: 18px;
-            background: rgba(255,255,255,.035);
-            border: 1px solid rgba(255,255,255,.05);
-            transition: .25s;
-        }
-
-        .cap:hover {
-            transform: translateY(-4px);
-            border-color: rgba(106,96,255,.45);
-            background: rgba(106,96,255,.07);
-        }
-
-        .cap-icon {
-            font-size: 25px;
-            margin-bottom: 12px;
-        }
-
-        .cap h3 {
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-
-        .cap p {
-            color: #747d96;
-            font-size: 12px;
-            line-height: 1.6;
+        .record-btn.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
         }
 
         /* CONVERSATION */
-
-        .conversation {
-            margin-top: 20px;
-            padding: 25px;
-        }
-
-        .messages {
+        .conversation-card {
+            min-height: 470px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            max-height: 220px;
+        }
+
+        .section-header {
+            padding: 20px 22px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+        }
+
+        .section-header p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .conversation {
+            flex: 1;
+            padding: 20px;
             overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .empty-conversation {
+            height: 100%;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
         }
 
         .message {
-            max-width: 80%;
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 75%;
             padding: 12px 15px;
-            border-radius: 14px;
-            font-size: 13px;
+            border-radius: 15px;
+            font-size: 14px;
             line-height: 1.5;
         }
 
-        .user {
-            align-self: flex-end;
-            background: #5c55ed;
+        .message.user .message-content {
+            background: #3730a3;
+            border-bottom-right-radius: 4px;
         }
 
-        .agent {
-            align-self: flex-start;
-            background: rgba(255,255,255,.07);
-            color: #c6cbd8;
+        .message.ai .message-content {
+            background: #1e293b;
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-bottom-left-radius: 4px;
         }
 
-        /* RESPONSIVE */
+        .message-label {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
 
-        @media(max-width: 850px) {
+        /* LIVE ACTIVITY */
+        .activity-card {
+            padding: 22px;
+            margin-bottom: 20px;
+        }
 
-            .main-grid {
+        .activity-title {
+            margin-bottom: 18px;
+        }
+
+        .activity-title h2 {
+            font-size: 18px;
+        }
+
+        .activity-title p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .activity-track {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .activity-item {
+            min-width: 170px;
+            padding: 14px 16px;
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .activity-icon {
+            font-size: 20px;
+        }
+
+        .activity-text {
+            font-size: 13px;
+        }
+
+        .activity-text strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .activity-text span {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .activity-arrow {
+            color: #475569;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* WHAT CAN I DO */
+        .capabilities-card {
+            padding: 25px;
+        }
+
+        .capabilities-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .capabilities-title h2 {
+            font-size: 20px;
+        }
+
+        .capabilities-title p {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .capabilities {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+        }
+
+        .capability {
+            background: rgba(30, 41, 59, 0.65);
+            border: 1px solid rgba(148, 163, 184, 0.12);
+            border-radius: 15px;
+            padding: 18px 10px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .capability:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96, 165, 250, 0.4);
+        }
+
+        .capability-icon {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .capability h3 {
+            font-size: 13px;
+        }
+
+        .capability p {
+            color: #64748b;
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 900px) {
+            .main-section {
                 grid-template-columns: 1fr;
             }
 
-            .cap-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .voice-card,
+            .conversation-card {
+                min-height: 400px;
+            }
+
+            .capabilities {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
 
-        @media(max-width: 550px) {
-
+        @media (max-width: 550px) {
             .container {
                 width: 92%;
+                padding-top: 20px;
             }
 
-            header {
-                align-items: flex-start;
+            .header h1 {
+                font-size: 25px;
             }
 
-            .online {
-                font-size: 11px;
+            .capabilities {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .voice-panel {
-                min-height: 440px;
+            .activity-item {
+                min-width: 145px;
             }
 
-            .cap-grid {
-                grid-template-columns: 1fr;
+            .message-content {
+                max-width: 88%;
             }
         }
     </style>
@@ -404,403 +433,305 @@
 <div class="container">
 
     <!-- HEADER -->
-
-    <header>
-
-        <div class="brand">
-
-            <div class="brand-icon">
-                🤖
-            </div>
-
-            <div>
-                <h1>AI Voice Agent</h1>
-                <p>Your intelligent personal assistant</p>
-            </div>
-
-        </div>
-
-        <div class="online">
-            <span class="online-dot"></span>
-            System Online
-        </div>
-
+    <header class="header">
+        <h1>AI VOICE AGENT</h1>
+        <p>Your intelligent voice assistant</p>
     </header>
 
 
-    <!-- MAIN -->
+    <!-- MAIN: RECORDING LEFT + CONVERSATION RIGHT -->
+    <section class="main-section">
 
-    <div class="main-grid">
+        <!-- VOICE CONTROL -->
+        <div class="card voice-card">
 
+            <div class="orb-container" id="orbContainer">
+                <div class="orb-ring ring-1"></div>
+                <div class="orb-ring ring-2"></div>
+                <div class="orb-ring ring-3"></div>
 
-        <!-- VOICE -->
-
-        <div class="card voice-panel" id="voicePanel">
+                <div class="orb">
+                    🤖
+                </div>
+            </div>
 
             <div class="status" id="status">
-                <strong>Ready</strong> — I'm listening when you are
+                Ready to listen
             </div>
 
-
-            <div class="orb-wrapper">
-
-                <div class="ring one"></div>
-                <div class="ring two"></div>
-                <div class="ring three"></div>
-
-                <div class="orb" id="orb">
-                    🎙️
-                </div>
-
-            </div>
-
-
-            <button class="talk-btn" id="recordBtn">
-                🎤 Start Conversation
+            <button class="record-btn" id="recordBtn">
+                🎤 Start Recording
             </button>
 
-            <div class="hint">
-                Click the button and speak naturally
-            </div>
-
         </div>
 
 
-        <!-- ACTIVITY -->
+        <!-- CONVERSATION -->
+        <div class="card conversation-card">
 
-        <div class="card activity">
+            <div class="section-header">
+                <h2>💬 Conversation</h2>
+                <p>Your conversation with the AI agent</p>
+            </div>
 
-            <h2 class="section-title">
-                ⚡ Live Activity
-            </h2>
+            <div class="conversation" id="conversation">
 
-            <div class="activity-list">
-
-                <div class="activity-item active" id="activity1">
-
-                    <div class="activity-icon">
-                        🎙️
-                    </div>
-
+                <div class="empty-conversation" id="emptyConversation">
                     <div>
-                        <b>Voice Input</b>
-                        <br>
-                        <span id="voiceStatus">
-                            Ready
-                        </span>
+                        <div style="font-size: 40px; margin-bottom: 12px;">
+                            💬
+                        </div>
+                        <div>
+                            Start speaking to begin the conversation
+                        </div>
                     </div>
-
-                </div>
-
-
-                <div class="activity-item" id="activity2">
-
-                    <div class="activity-icon">
-                        🧠
-                    </div>
-
-                    <div>
-                        <b>AI Processing</b>
-                        <br>
-                        <span>Waiting</span>
-                    </div>
-
-                </div>
-
-
-                <div class="activity-item" id="activity3">
-
-                    <div class="activity-icon">
-                        🔧
-                    </div>
-
-                    <div>
-                        <b>Tools</b>
-                        <br>
-                        <span>Ready</span>
-                    </div>
-
-                </div>
-
-
-                <div class="activity-item" id="activity4">
-
-                    <div class="activity-icon">
-                        🔊
-                    </div>
-
-                    <div>
-                        <b>Voice Response</b>
-                        <br>
-                        <span>Waiting</span>
-                    </div>
-
                 </div>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
 
-    <!-- CAPABILITIES -->
+    <!-- LIVE ACTIVITY -->
+    <section class="card activity-card">
 
-    <div class="card capabilities">
+        <div class="activity-title">
+            <h2>⚡ Live Activity</h2>
+            <p>Real-time activity of your voice agent</p>
+        </div>
 
-        <h2 class="section-title">
-            ✨ What can I do?
-        </h2>
+        <div class="activity-track" id="activityTrack">
+
+            <div class="activity-item">
+                <div class="activity-icon">🎤</div>
+                <div class="activity-text">
+                    <strong>Ready</strong>
+                    <span>Waiting for input</span>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
 
 
-        <div class="cap-grid">
+    <!-- WHAT CAN I DO -->
+    <section class="card capabilities-card">
 
+        <div class="capabilities-title">
+            <h2>✨ What Can I Do?</h2>
+            <p>Things you can ask your AI voice agent</p>
+        </div>
 
-            <div class="cap">
+        <div class="capabilities">
 
-                <div class="cap-icon">📅</div>
-
+            <div class="capability">
+                <div class="capability-icon">📅</div>
                 <h3>Calendar</h3>
-
-                <p>
-                    Check upcoming events and schedule meetings.
-                </p>
-
+                <p>View & create events</p>
             </div>
 
-
-            <div class="cap">
-
-                <div class="cap-icon">🔎</div>
-
+            <div class="capability">
+                <div class="capability-icon">🔎</div>
                 <h3>Web Search</h3>
-
-                <p>
-                    Search the web for current information.
-                </p>
-
+                <p>Search the internet</p>
             </div>
 
-
-            <div class="cap">
-
-                <div class="cap-icon">🧮</div>
-
+            <div class="capability">
+                <div class="capability-icon">🧮</div>
                 <h3>Calculator</h3>
-
-                <p>
-                    Perform calculations and solve mathematical problems.
-                </p>
-
+                <p>Perform calculations</p>
             </div>
 
-
-            <div class="cap">
-
-                <div class="cap-icon">🧠</div>
-
+            <div class="capability">
+                <div class="capability-icon">🧠</div>
                 <h3>Memory</h3>
-
-                <p>
-                    Remember useful information for future conversations.
-                </p>
-
+                <p>Remember facts</p>
             </div>
 
-
-            <div class="cap">
-
-                <div class="cap-icon">💬</div>
-
-                <h3>Conversation</h3>
-
-                <p>
-                    Maintain conversation context using memory.
-                </p>
-
+            <div class="capability">
+                <div class="capability-icon">📧</div>
+                <h3>Gmail</h3>
+                <p>Read & send emails</p>
             </div>
 
-
-            <div class="cap">
-
-                <div class="cap-icon">🎤</div>
-
-                <h3>Voice Interaction</h3>
-
-                <p>
-                    Talk naturally using speech recognition and AI voice.
-                </p>
-
+            <div class="capability">
+                <div class="capability-icon">🎙️</div>
+                <h3>Voice</h3>
+                <p>Talk naturally</p>
             </div>
 
         </div>
 
-    </div>
-
-
-    <!-- CONVERSATION -->
-
-    <div class="card conversation">
-
-        <h2 class="section-title">
-            💬 Conversation
-        </h2>
-
-        <div class="messages" id="messages">
-
-            <div class="message agent">
-                Hello! I'm your AI voice assistant. Ask me anything or give me a task.
-            </div>
-
-        </div>
-
-    </div>
+    </section>
 
 </div>
 
 
 <script>
 
-const recordBtn = document.getElementById("recordBtn");
-const status = document.getElementById("status");
-const voicePanel = document.getElementById("voicePanel");
-const orb = document.getElementById("orb");
-const messages = document.getElementById("messages");
-
-const voiceStatus = document.getElementById("voiceStatus");
-
-let mediaRecorder;
-let audioChunks = [];
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
 
 
-/* -------------------------
-   STATUS
-------------------------- */
-
-function setStatus(text, icon = "🎙️") {
-
-    status.innerHTML = `<strong>${icon} ${text}</strong>`;
-
-}
+    const recordBtn = document.getElementById("recordBtn");
+    const status = document.getElementById("status");
+    const orbContainer = document.getElementById("orbContainer");
+    const conversation = document.getElementById("conversation");
+    const activityTrack = document.getElementById("activityTrack");
+    const emptyConversation = document.getElementById("emptyConversation");
 
 
-/* -------------------------
-   ACTIVITY
-------------------------- */
+    /* -----------------------------
+       STATUS
+    ----------------------------- */
 
-function setActivity(number, text) {
+    function setStatus(text) {
+        status.innerText = text;
+    }
 
-    document.querySelectorAll(".activity-item")
-        .forEach(item => item.classList.remove("active"));
 
-    const item = document.getElementById("activity" + number);
+    /* -----------------------------
+       CONVERSATION
+    ----------------------------- */
 
-    if (item) {
+    function addMessage(type, text) {
 
-        item.classList.add("active");
-
-        const span = item.querySelector("span");
-
-        if (span) {
-            span.textContent = text;
+        if (emptyConversation) {
+            emptyConversation.remove();
         }
 
+        const message = document.createElement("div");
+        message.className = `message ${type}`;
+
+        const content = document.createElement("div");
+        content.className = "message-content";
+
+        const label = document.createElement("div");
+        label.className = "message-label";
+
+        label.innerText =
+            type === "user"
+                ? "👤 You"
+                : "🤖 AI";
+
+        const messageText = document.createElement("div");
+        messageText.innerText = text;
+
+        content.appendChild(label);
+        content.appendChild(messageText);
+
+        message.appendChild(content);
+
+        conversation.appendChild(message);
+
+        conversation.scrollTop = conversation.scrollHeight;
     }
 
-}
 
-function showToolActivity(tool) {
+    /* -----------------------------
+       LIVE ACTIVITY
+    ----------------------------- */
 
-    const toolActivity = document.getElementById("activity3");
-
-    if (!toolActivity) return;
-
-    const icon = toolActivity.querySelector(".activity-icon");
-    const title = toolActivity.querySelector("b");
-    const span = toolActivity.querySelector("span");
-
-    toolActivity.classList.add("active");
-
-    if (!tool) {
-
-        icon.textContent = "🔧";
-        title.textContent = "Tools";
-        span.textContent = "No tool required";
-
-        return;
+    function clearActivity() {
+        activityTrack.innerHTML = "";
     }
 
-    if (tool === "Google Calendar") {
 
-        icon.textContent = "📅";
-        title.textContent = "Google Calendar";
-        span.textContent = "Calendar task completed";
+    function addActivity(icon, title, subtitle, arrow = true) {
 
+        const item = document.createElement("div");
+        item.className = "activity-item";
+
+        item.innerHTML = `
+            <div class="activity-icon">${icon}</div>
+
+            <div class="activity-text">
+                <strong>${title}</strong>
+                <span>${subtitle}</span>
+            </div>
+        `;
+
+        activityTrack.appendChild(item);
+
+        if (arrow) {
+            const arrowElement = document.createElement("div");
+            arrowElement.className = "activity-arrow";
+            arrowElement.innerText = "→";
+
+            activityTrack.appendChild(arrowElement);
+        }
+
+        activityTrack.scrollLeft = activityTrack.scrollWidth;
     }
 
-    else if (tool === "Web Search") {
 
-        icon.textContent = "🔎";
-        title.textContent = "Web Search";
-        span.textContent = "Search completed";
+    function showToolActivity(tool) {
 
+        const toolMap = {
+
+            "Google Calendar": {
+                icon: "📅",
+                title: "Google Calendar",
+                subtitle: "Calendar task completed"
+            },
+
+            "Web Search": {
+                icon: "🔎",
+                title: "Web Search",
+                subtitle: "Search completed"
+            },
+
+            "Calculator": {
+                icon: "🧮",
+                title: "Calculator",
+                subtitle: "Calculation completed"
+            },
+
+            "Memory": {
+                icon: "🧠",
+                title: "Memory",
+                subtitle: "Fact saved"
+            },
+
+            "Gmail": {
+                icon: "📧",
+                title: "Gmail",
+                subtitle: "Email task completed"
+            }
+        };
+
+
+        const activity = toolMap[tool];
+
+        if (activity) {
+
+            addActivity(
+                activity.icon,
+                activity.title,
+                activity.subtitle
+            );
+
+        } else {
+
+            addActivity(
+                "🔧",
+                "Tools",
+                "Task completed"
+            );
+
+        }
     }
 
-    else if (tool === "Calculator") {
 
-        icon.textContent = "🧮";
-        title.textContent = "Calculator";
-        span.textContent = "Calculation completed";
+    /* -----------------------------
+       RECORDING
+    ----------------------------- */
 
-    }
-
-    else if (tool === "Memory") {
-
-        icon.textContent = "🧠";
-        title.textContent = "Memory";
-        span.textContent = "Fact saved";
-
-    }
-
-    else {
-
-        icon.textContent = "🔧";
-        title.textContent = tool;
-        span.textContent = "Tool completed";
-
-    }
-}
-
-
-/* -------------------------
-   MESSAGE
-------------------------- */
-
-function addMessage(type, text) {
-
-    const message = document.createElement("div");
-
-    message.className = "message " + type;
-
-    message.textContent = text;
-
-    messages.appendChild(message);
-
-    messages.scrollTop = messages.scrollHeight;
-
-}
-
-
-/* -------------------------
-   START RECORDING
-------------------------- */
-
-recordBtn.addEventListener("click", async () => {
-
-
-    /* START */
-
-    if (!mediaRecorder || mediaRecorder.state === "inactive") {
+    async function startRecording() {
 
         try {
 
@@ -809,261 +740,257 @@ recordBtn.addEventListener("click", async () => {
                     audio: true
                 });
 
-
             mediaRecorder =
                 new MediaRecorder(stream);
 
-
             audioChunks = [];
 
+            mediaRecorder.ondataavailable =
+                event => {
 
-            mediaRecorder.ondataavailable = event => {
-
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
-
-            };
-
-
-            mediaRecorder.onstop = async () => {
-
-                stream.getTracks().forEach(track => track.stop());
-
-                setStatus("Processing your request...", "🧠");
-
-                setActivity(1, "Speech captured");
-                setActivity(2, "AI is thinking...");
-
-                recordBtn.disabled = true;
-
-                const audioBlob =
-                    new Blob(
-                        audioChunks,
-                        {type: "audio/webm"}
-                    );
-
-
-                const formData = new FormData();
-
-                formData.append(
-                    "audio",
-                    audioBlob,
-                    "recording.webm"
-                );
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            "/voice",
-                            {
-                                method: "POST",
-                                body: formData
-                            }
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    console.log("API:", data);
-
-                    showToolActivity(data.tool_used);
-
-
-                    if (data.error) {
-
-                        setStatus(
-                            "Something went wrong",
-                            "❌"
-                        );
-
-                        setActivity(
-                            2,
-                            "Error"
-                        );
-
-                        alert(data.error);
-
-                        return;
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
                     }
 
-
-                    /* USER TEXT */
-
-                    addMessage(
-                        "user",
-                        data.text
-                    );
+                };
 
 
-                    setActivity(
-                        2,
-                        "Response generated"
-                    );
+            mediaRecorder.onstop =
+                async () => {
 
-
-                    /* AGENT */
-
-                    addMessage(
-                        "agent",
-                        data.response
-                    );
-
-
-                    /* TTS */
-
-                    if (data.audio_file) {
-
-                        setActivity(
-                            4,
-                            "Speaking..."
+                    const audioBlob =
+                        new Blob(
+                            audioChunks,
+                            { type: "audio/webm" }
                         );
 
-                        setStatus(
-                            "Speaking...",
-                            "🔊"
-                        );
+                    stream
+                        .getTracks()
+                        .forEach(track => track.stop());
 
-
-                        const audio =
-                            new Audio(
-                                data.audio_file
-                            );
-
-
-                        audio.onended = () => {
-
-                            setStatus(
-                                "Ready for your next task",
-                                "✨"
-                            );
-
-                            setActivity(
-                                4,
-                                "Completed"
-                            );
-
-                            setActivity(
-                                1,
-                                "Ready"
-                            );
-
-                            recordBtn.disabled = false;
-
-                        };
-
-
-                        await audio.play();
-
-                    } else {
-
-                        setStatus(
-                            "Task completed",
-                            "✅"
-                        );
-
-                        recordBtn.disabled = false;
-
-                    }
-
-
-                } catch (error) {
-
-                    console.error(
-                        "Voice error:",
-                        error
-                    );
-
-
-                    setStatus(
-                        "Connection error",
-                        "❌"
-                    );
-
-
-                    setActivity(
-                        2,
-                        "Failed"
-                    );
-
-
-                    recordBtn.disabled = false;
-
-                }
-
-            };
+                    await processAudio(audioBlob);
+                };
 
 
             mediaRecorder.start();
 
+            isRecording = true;
 
-            voicePanel.classList.add("listening");
+            recordBtn.innerText = "⏹ Stop Recording";
+            recordBtn.classList.add("recording");
 
-            recordBtn.classList.add("stop");
+            orbContainer.classList.add("active");
 
-            recordBtn.textContent =
-                "⏹️ Stop Recording";
+            setStatus("🎤 Listening...");
+
+            clearActivity();
+
+            addActivity(
+                "🎤",
+                "Listening",
+                "Recording your voice"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            setStatus("Microphone permission denied");
+
+            alert(
+                "Please allow microphone access."
+            );
+        }
+    }
 
 
-            setStatus(
-                "Listening...",
-                "🎙️"
+    function stopRecording() {
+
+        if (
+            mediaRecorder &&
+            mediaRecorder.state !== "inactive"
+        ) {
+
+            mediaRecorder.stop();
+        }
+
+        isRecording = false;
+
+        recordBtn.innerText = "🎤 Start Recording";
+        recordBtn.classList.remove("recording");
+
+        orbContainer.classList.remove("active");
+
+        setStatus("Processing...");
+    }
+
+
+    /* -----------------------------
+       PROCESS AUDIO
+    ----------------------------- */
+
+    async function processAudio(audioBlob) {
+
+        try {
+
+            setStatus("🧠 Processing...");
+
+            addActivity(
+                "⚙️",
+                "Processing",
+                "Understanding your request"
             );
 
 
-            voiceStatus.textContent =
-                "Listening...";
+            const formData =
+                new FormData();
 
-
-            setActivity(
-                1,
-                "Listening..."
+            formData.append(
+                "audio",
+                audioBlob,
+                "recording.webm"
             );
+
+
+            const response =
+                await fetch(
+                    "/voice",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.error) {
+
+                throw new Error(
+                    data.error
+                );
+            }
+
+
+            /* USER MESSAGE */
+
+            if (data.text) {
+
+                addMessage(
+                    "user",
+                    data.text
+                );
+            }
+
+
+            /* TOOL */
+
+            if (data.tool_used) {
+
+                showToolActivity(
+                    data.tool_used
+                );
+            }
+
+
+            /* AI RESPONSE */
+
+            if (data.response) {
+
+                addMessage(
+                    "ai",
+                    data.response
+                );
+            }
+
+
+            /* SPEAKING */
+
+            setStatus("🔊 Speaking...");
+
+            addActivity(
+                "🔊",
+                "Speaking",
+                "AI response generated"
+            );
+
+
+            if (data.audio_file) {
+
+                const audio =
+                    new Audio(
+                        data.audio_file
+                    );
+
+                audio.onended = () => {
+
+                    setStatus(
+                        "✓ Completed"
+                    );
+
+                    addActivity(
+                        "✓",
+                        "Completed",
+                        "Ready for next request",
+                        false
+                    );
+                };
+
+                await audio.play();
+
+            } else {
+
+                setStatus(
+                    "✓ Completed"
+                );
+
+                addActivity(
+                    "✓",
+                    "Completed",
+                    "Ready for next request",
+                    false
+                );
+            }
 
 
         } catch (error) {
 
-            console.error(
-                "Microphone error:",
-                error
+            console.error(error);
+
+            setStatus("❌ Error");
+
+            addActivity(
+                "❌",
+                "Error",
+                error.message,
+                false
             );
+        }
+    }
 
 
-            setStatus(
-                "Microphone permission denied",
-                "❌"
-            );
+    /* -----------------------------
+       BUTTON
+    ----------------------------- */
+
+    recordBtn.addEventListener(
+        "click",
+        () => {
+
+            if (isRecording) {
+
+                stopRecording();
+
+            } else {
+
+                startRecording();
+
+            }
 
         }
-
-
-    }
-
-    /* STOP */
-
-    else {
-
-        mediaRecorder.stop();
-
-        voicePanel.classList.remove("listening");
-
-        recordBtn.classList.remove("stop");
-
-        recordBtn.textContent =
-            "🎤 Start Conversation";
-
-        setActivity(
-            1,
-            "Processing..."
-        );
-
-    }
-
-});
+    );
 
 </script>
 
