@@ -34,6 +34,16 @@ def create_memory_table():
         )
     """)
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS pending_gmail_emails (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            to_email TEXT NOT NULL,
+            subject TEXT NOT NULL,
+            body TEXT NOT NULL
+        )
+    """)
+
+
     conn.commit()
     conn.close()
 
@@ -183,6 +193,49 @@ def clear_pending_event():
     cursor = conn.cursor()
 
     cursor.execute("DELETE FROM pending_calendar_events")
+
+    conn.commit()
+    conn.close()
+
+def save_pending_gmail_email(to_email, subject, body):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM pending_gmail_emails")
+
+    cursor.execute("""
+        INSERT INTO pending_gmail_emails
+        (to_email, subject, body)
+        VALUES (?, ?, ?)
+    """, (to_email, subject, body))
+
+    conn.commit()
+    conn.close()
+
+
+def get_pending_gmail_email():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT to_email, subject, body
+        FROM pending_gmail_emails
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+
+    email = cursor.fetchone()
+
+    conn.close()
+
+    return email
+
+
+def clear_pending_gmail_email():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM pending_gmail_emails")
 
     conn.commit()
     conn.close()

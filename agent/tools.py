@@ -9,9 +9,21 @@ from memory import (
     save_fact,
     save_pending_event,
     get_pending_event,
-    clear_pending_event
+    clear_pending_event,
+
+    save_pending_gmail_email,
+    get_pending_gmail_email,
+    clear_pending_gmail_email,
 )
 from calendar_tool import get_upcoming_events, create_calendar_event
+from gmail_tool import (
+    get_unread_emails,
+    search_emails,
+    read_email,
+    get_emails_for_summary,
+    send_email,
+    create_email_draft,
+)
 
 
 @tool
@@ -126,3 +138,140 @@ def confirm_calendar_event(confirmation: str) -> str:
         return "Calendar event cancelled."
 
     return "Please say yes to confirm or no to cancel."
+
+@tool
+def gmail_unread_emails() -> str:
+    """Get unread emails from the user's Gmail."""
+    try:
+        return get_unread_emails(5)
+    except Exception as e:
+        return f"Could not access Gmail: {e}"
+
+
+@tool
+def gmail_search(query: str) -> str:
+    """Search the user's Gmail using a Gmail search query."""
+    try:
+        return search_emails(query, 5)
+    except Exception as e:
+        return f"Could not search Gmail: {e}"
+
+
+@tool
+def gmail_read_email(message_id: str) -> str:
+    """Read the content of a specific Gmail email using its message ID."""
+    try:
+        return read_email(message_id)
+    except Exception as e:
+        return f"Could not read email: {e}"
+
+
+@tool
+def gmail_send_email(
+    to: str,
+    subject: str,
+    body: str
+) -> str:
+    """
+    Prepare an email for confirmation.
+    Does not send the email immediately.
+    """
+
+    try:
+        save_pending_gmail_email(
+            to,
+            subject,
+            body
+        )
+
+        return (
+            f"Email prepared successfully.\n"
+            f"To: {to}\n"
+            f"Subject: {subject}\n"
+            f"Ask the user for confirmation before sending."
+        )
+
+    except Exception as e:
+        return f"Could not prepare email: {e}"
+
+
+@tool
+def gmail_confirm_send_email(
+    confirmation: str
+) -> str:
+    """
+    Send the pending Gmail email after explicit confirmation.
+    """
+
+    confirmation = confirmation.lower().strip()
+
+    pending_email = get_pending_gmail_email()
+
+    if not pending_email:
+        return "There is no pending email."
+
+    if confirmation in [
+        "yes",
+        "y",
+        "confirm",
+        "confirmed",
+        "yes please",
+        "send it",
+        "send",
+        "haan",
+        "ha",
+        "bhej do"
+    ]:
+
+        to, subject, body = pending_email
+
+        try:
+            result = send_email(
+                to,
+                subject,
+                body
+            )
+
+            clear_pending_gmail_email()
+
+            return result
+
+        except Exception as e:
+            return f"Could not send email: {e}"
+
+    if confirmation in [
+        "no",
+        "n",
+        "cancel",
+        "cancel it",
+        "nahi",
+        "mat bhejo"
+    ]:
+
+        clear_pending_gmail_email()
+
+        return "Email cancelled."
+
+    return "Please say yes to send the email or no to cancel."
+
+
+@tool
+def gmail_create_draft(
+    to: str,
+    subject: str,
+    body: str
+) -> str:
+    """Create a Gmail draft without sending it."""
+    try:
+        return create_email_draft(to, subject, body)
+    except Exception as e:
+        return f"Could not create Gmail draft: {e}"
+
+
+@tool
+def gmail_summarize_emails() -> str:
+    """Get recent emails so the AI agent can summarize them."""
+    try:
+        return get_emails_for_summary(5)
+    except Exception as e:
+        return f"Could not retrieve emails for summary: {e}"

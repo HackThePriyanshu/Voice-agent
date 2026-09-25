@@ -10,13 +10,22 @@ from agent.tools import (
     remember_fact,
     calendar_events,
     create_calendar_event_tool,
-    confirm_calendar_event
+    confirm_calendar_event,
+
+    gmail_unread_emails,
+    gmail_search,
+    gmail_read_email,
+    gmail_send_email,
+    gmail_confirm_send_email,
+    gmail_create_draft,
+    gmail_summarize_emails,
 )
 
 from memory import (
     get_recent_messages,
     get_facts,
-    get_pending_event
+    get_pending_event,
+    get_pending_gmail_email,
 )
 
 
@@ -41,9 +50,18 @@ tools = [
     calculator,
     tavily_search,
     remember_fact,
+
     calendar_events,
     create_calendar_event_tool,
-    confirm_calendar_event
+    confirm_calendar_event,
+
+    gmail_unread_emails,
+    gmail_search,
+    gmail_read_email,
+    gmail_send_email,
+    gmail_confirm_send_email,
+    gmail_create_draft,
+    gmail_summarize_emails,
 ]
 
 
@@ -132,6 +150,35 @@ For a new calendar event:
 2. Then ask the user for confirmation.
 3. Never create the Google Calendar event before confirmation.
 
+=========================================================
+GMAIL CONFIRMATION RULES
+=========================================================
+
+When the user wants to send an email:
+
+1. First use gmail_send_email.
+2. Never send the email immediately.
+3. Ask the user for confirmation.
+
+If the user confirms with:
+"yes"
+"confirm"
+"send it"
+"haan"
+"bhej do"
+
+the email must be sent using gmail_confirm_send_email.
+
+If the user says:
+"no"
+"cancel"
+"nahi"
+"mat bhejo"
+
+cancel the pending email.
+
+Never send an email without explicit confirmation.
+
 """
 )
 
@@ -178,6 +225,17 @@ def detect_tool(tool_name):
     ]:
 
         LAST_TOOL_USED = "Google Calendar"
+
+    elif tool_name in [
+    "gmail_unread_emails",
+    "gmail_search",
+    "gmail_read_email",
+    "gmail_send_email",
+    "gmail_confirm_send_email",
+    "gmail_create_draft",
+    "gmail_summarize_emails"
+    ]:
+        LAST_TOOL_USED = "Gmail"
 
 
 # =========================================================
@@ -283,6 +341,62 @@ def get_response(text):
     facts = get_facts()
 
     messages = []
+
+    pending_gmail = get_pending_gmail_email()
+
+    if pending_gmail:
+        command = text.lower().strip()
+
+        command = (
+            command
+            .replace(".", "")
+            .replace("!", "")
+            .replace("?", "")
+            .replace(",", "")
+        )
+
+        yes_words = [
+        "yes",
+        "y",
+        "confirm",
+        "confirmed",
+        "yes please",
+        "yes send it",
+        "send it",
+        "send",
+        "haan",
+        "ha",
+        "bhej do"
+    ]
+
+        no_words = [
+            "no",
+            "n",
+            "cancel",
+            "cancel it",
+            "nahi",
+            "mat bhejo"
+        ]
+
+        if command in yes_words:
+            LAST_TOOL_USED = "Gmail"
+
+            result = gmail_confirm_send_email.invoke({
+                "confirmation": "yes"
+            })
+
+            return result
+
+        if command in no_words:
+            LAST_TOOL_USED = "Gmail"
+
+            result = gmail_confirm_send_email.invoke({
+                "confirmation": "no"
+            })
+
+            return result
+
+
 
 
     # =====================================================
