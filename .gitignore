@@ -10,3 +10,6 @@ __pycache__/
 memory.db
 
 audio/
+
+credentials.json
+token.json

@@ -19,15 +19,16 @@ def create_memory_table():
     """)
 
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS facts (
+        CREATE TABLE IF NOT EXISTS pending_calendar_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fact TEXT NOT NULL
+            summary TEXT NOT NULL,
+            start_datetime TEXT NOT NULL,
+            end_datetime TEXT NOT NULL
         )
     """)
 
     conn.commit()
     conn.close()
-
 
 def save_message(role, message):
 
@@ -133,6 +134,48 @@ def remove_duplicate_facts():
             GROUP BY fact
         )
     """)
+
+    conn.commit()
+    conn.close()
+
+def save_pending_event(summary, start_datetime, end_datetime):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM pending_calendar_events")
+
+    cursor.execute("""
+        INSERT INTO pending_calendar_events
+        (summary, start_datetime, end_datetime)
+        VALUES (?, ?, ?)
+    """, (summary, start_datetime, end_datetime))
+
+    conn.commit()
+    conn.close()
+
+
+def get_pending_event():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT summary, start_datetime, end_datetime
+        FROM pending_calendar_events
+        ORDER BY id DESC
+        LIMIT 1
+    """)
+
+    event = cursor.fetchone()
+    conn.close()
+
+    return event
+
+
+def clear_pending_event():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM pending_calendar_events")
 
     conn.commit()
     conn.close()

@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from voice.stt import speech_to_text
 from voice.tts import text_to_speech
 
-from agent.agent import get_response
+from agent.agent import get_response, get_last_tool_used
 
 from memory import create_memory_table, save_message
 
@@ -101,6 +101,10 @@ async def voice(audio: UploadFile = File(...)):
 
         print("🤖 Agent:", response)
 
+        tool_used = get_last_tool_used()
+
+        print("🔧 Tool used:", tool_used)
+
 
         # ------------------------------------------
         # 4. Save Conversation
@@ -125,9 +129,10 @@ async def voice(audio: UploadFile = File(...)):
         # ------------------------------------------
 
         return {
-            "text": text,
-            "response": response,
-            "audio_file": f"/audio/{output_filename}"
+        "text": text,
+        "response": response,
+        "tool_used": tool_used,
+        "audio_file": f"/audio/{output_filename}"
         }
 
 
