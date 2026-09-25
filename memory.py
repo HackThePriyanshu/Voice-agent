@@ -19,6 +19,13 @@ def create_memory_table():
     """)
 
     cursor.execute("""
+        CREATE TABLE IF NOT EXISTS facts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fact TEXT NOT NULL
+        )
+    """)
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS pending_calendar_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             summary TEXT NOT NULL,
