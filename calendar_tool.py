@@ -10,40 +10,50 @@ SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 
 def get_calendar_service():
+    # Render / production
+    if os.getenv("GOOGLE_REFRESH_TOKEN"):
+        creds = Credentials(
+            token=None,
+            refresh_token=os.getenv("GOOGLE_REFRESH_TOKEN"),
+            token_uri="https://oauth2.googleapis.com/token",
+            client_id=os.getenv("GOOGLE_CLIENT_ID"),
+            client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
+            scopes=SCOPES,
+        )
+
+        return build(
+            "calendar",
+            "v3",
+            credentials=creds
+        )
+
+    # Local development
     creds = None
 
-    # Agar pehle authentication ho chuka hai
     if os.path.exists("token.json"):
         creds = Credentials.from_authorized_user_file(
             "token.json",
             SCOPES
         )
 
-    # Token valid nahi hai to refresh/login
     if not creds or not creds.valid:
-
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
-
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 "credentials.json",
                 SCOPES
             )
-
             creds = flow.run_local_server(port=0)
 
-        # Authentication token save karo
         with open("token.json", "w") as token:
             token.write(creds.to_json())
 
-    service = build(
+    return build(
         "calendar",
         "v3",
         credentials=creds
     )
-
-    return service
 
 
 def get_upcoming_events(max_results=10):
