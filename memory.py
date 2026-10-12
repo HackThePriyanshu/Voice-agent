@@ -1,248 +1,185 @@
-import sqlite3
+
+import os
+import psycopg
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-DB_NAME = "memory.db"
+def get_connection():
+    database_url = os.getenv("DATABASE_URL")
+
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not configured")
+
+    return psycopg.connect(database_url)
 
 
 def create_memory_table():
-
-    conn = sqlite3.connect(DB_NAME)
-
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS conversation (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            role TEXT NOT NULL,
-            message TEXT NOT NULL
-        )
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS facts (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            fact TEXT NOT NULL
-        )
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS pending_calendar_events (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            summary TEXT NOT NULL,
-            start_datetime TEXT NOT NULL,
-            end_datetime TEXT NOT NULL
-        )
-    """)
-
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS pending_gmail_emails (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            to_email TEXT NOT NULL,
-            subject TEXT NOT NULL,
-            body TEXT NOT NULL
-        )
-    """)
-
-
-    conn.commit()
-    conn.close()
-
-def save_message(role, message):
-
-    conn = sqlite3.connect(DB_NAME)
-
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "INSERT INTO conversation (role, message) VALUES (?, ?)",
-        (role, message)
-    )
-
-    conn.commit()
-    conn.close()
-
-
-def get_messages():
-
-    conn = sqlite3.connect(DB_NAME)
-
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT role, message
-        FROM conversation
-        ORDER BY id
-    """)
-
-    messages = cursor.fetchall()
-
-    conn.close()
-
-    return messages
-
-
-def get_recent_messages(limit=10):
-
-    conn = sqlite3.connect(DB_NAME)
-
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT role, message
-        FROM conversation
-        ORDER BY id DESC
-        LIMIT ?
-    """, (limit,))
-
-    messages = cursor.fetchall()
-
-    conn.close()
-
-    # Oldest → newest order
-    messages.reverse()
-
-    return messages
-
-def save_fact(fact):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "SELECT 1 FROM facts WHERE fact = ?",
-        (fact,)
-    )
-
-    if cursor.fetchone() is None:
-        cursor.execute(
-            "INSERT INTO facts (fact) VALUES (?)",
-            (fact,)
-        )
-
-    conn.commit()
-    conn.close()
-
-def get_facts():
-
-    conn = sqlite3.connect(DB_NAME)
-
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT fact
-        FROM facts
-        ORDER BY id
-    """)
-
-    facts = cursor.fetchall()
-
-    conn.close()
-
-    return [fact[0] for fact in facts]
-
-def remove_duplicate_facts():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        DELETE FROM facts
-        WHERE id NOT IN (
-            SELECT MIN(id)
-            FROM facts
-            GROUP BY fact
-        )
-    """)
-
-    conn.commit()
-    conn.close()
-
-def save_pending_event(summary, start_datetime, end_datetime):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM pending_calendar_events")
-
-    cursor.execute("""
-        INSERT INTO pending_calendar_events
-        (summary, start_datetime, end_datetime)
-        VALUES (?, ?, ?)
-    """, (summary, start_datetime, end_datetime))
-
-    conn.commit()
-    conn.close()
-
-
-def get_pending_event():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT summary, start_datetime, end_datetime
-        FROM pending_calendar_events
-        ORDER BY id DESC
-        LIMIT 1
-    """)
-
-    event = cursor.fetchone()
-    conn.close()
-
-    return event
-
-
-def clear_pending_event():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM pending_calendar_events")
-
-    conn.commit()
-    conn.close()
-
-def save_pending_gmail_email(to_email, subject, body):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM pending_gmail_emails")
-
-    cursor.execute("""
-        INSERT INTO pending_gmail_emails
-        (to_email, subject, body)
-        VALUES (?, ?, ?)
-    """, (to_email, subject, body))
-
-    conn.commit()
-    conn.close()
-
-
-def get_pending_gmail_email():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT to_email, subject, body
-        FROM pending_gmail_emails
-        ORDER BY id DESC
-        LIMIT 1
-    """)
-
-    email = cursor.fetchone()
-
-    conn.close()
-
-    return email
-
-
-def clear_pending_gmail_email():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("DELETE FROM pending_gmail_emails")
-
-    conn.commit()
-    conn.close()
-
-
-
-
-if __name__ == "__main__":
-    create_memory_table()
-    print("✅ Memory database created successfully!")
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS facts (
+                    id BIGSERIAL PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    fact TEXT NOT NULL,
+                    UNIQUE (user_id, fact)
+                )
+            """)
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS pending_calendar_events (
+                    id BIGSERIAL PRIMARY KEY,
+                    summary TEXT NOT NULL,
+                    start_datetime TEXT NOT NULL,
+                    end_datetime TEXT NOT NULL,
+                    thread_id TEXT
+                )
+            """)
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS pending_gmail_emails (
+                    id BIGSERIAL PRIMARY KEY,
+                    to_email TEXT NOT NULL,
+                    subject TEXT NOT NULL,
+                    body TEXT NOT NULL,
+                    thread_id TEXT
+                )
+            """)
+
+
+# =========================
+# FACT MEMORY
+# =========================
+
+def save_fact(user_id, fact):
+    if not user_id:
+        raise ValueError("user_id is required")
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO facts (user_id, fact)
+                VALUES (%s, %s)
+                ON CONFLICT (user_id, fact) DO NOTHING
+            """, (user_id, fact))
+
+
+def get_facts(user_id):
+    if not user_id:
+        return []
+
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT fact
+                FROM facts
+                WHERE user_id = %s
+                ORDER BY id
+            """, (user_id,))
+
+            return [row[0] for row in cur.fetchall()]
+
+
+# =========================
+# CALENDAR PENDING MEMORY
+# =========================
+
+def save_pending_event(
+    thread_id,
+    summary,
+    start_datetime,
+    end_datetime
+):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM pending_calendar_events
+                WHERE thread_id = %s
+            """, (thread_id,))
+
+            cur.execute("""
+                INSERT INTO pending_calendar_events
+                (summary, start_datetime, end_datetime, thread_id)
+                VALUES (%s, %s, %s, %s)
+            """, (
+                summary,
+                start_datetime,
+                end_datetime,
+                thread_id
+            ))
+
+
+def get_pending_event(thread_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT summary, start_datetime, end_datetime
+                FROM pending_calendar_events
+                WHERE thread_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+            """, (thread_id,))
+
+            return cur.fetchone()
+
+
+def clear_pending_event(thread_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM pending_calendar_events
+                WHERE thread_id = %s
+            """, (thread_id,))
+
+
+# =========================
+# GMAIL PENDING MEMORY
+# =========================
+
+def save_pending_gmail_email(
+    thread_id,
+    to_email,
+    subject,
+    body
+):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM pending_gmail_emails
+                WHERE thread_id = %s
+            """, (thread_id,))
+
+            cur.execute("""
+                INSERT INTO pending_gmail_emails
+                (to_email, subject, body, thread_id)
+                VALUES (%s, %s, %s, %s)
+            """, (
+                to_email,
+                subject,
+                body,
+                thread_id
+            ))
+
+
+def get_pending_gmail_email(thread_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT to_email, subject, body
+                FROM pending_gmail_emails
+                WHERE thread_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+            """, (thread_id,))
+
+            return cur.fetchone()
+
+
+def clear_pending_gmail_email(thread_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM pending_gmail_emails
+                WHERE thread_id = %s
+            """, (thread_id,))
